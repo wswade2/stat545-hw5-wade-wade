@@ -147,13 +147,14 @@ pie(summary(gapminder$continent), main="Continents")
 
 It looks a bit plain, and it suffers from, well, being a pie chart. Pie charts are poor for a number of reasons. For one, as Tamara Munzner mentioned in her guest lecture, pie charts show proportions using areas and angles. The human perceptual system is not designed to handle very well. But I also saw a way to redeem pie charts...
 
+I will also experiment with <b>reordering data</b> at the same time.
 
 
 ```r
 g<-  gapminder %>% 
   group_by(continent, country, year)%>%
   summarize(max_GDP=max(gdpPercap))
-View(g)
+#View(g)
 ```
 
 
@@ -169,29 +170,89 @@ ggplot(data=g,aes(x=year,y=max_GDP,fill=continent))+
 
 It looks cool, but I don't think we have the right color scheme. This color scheme shows a progression by continent which doesn't make sense. Also, the y-axis values do not look good and, worse, may even be misleading. Since we are interested mostly in showing an overall trend with this type of plot, I think it's best to remove the values on the y-axis altogether.
 
+I also don't like that Oceania is at the center of the graph, because it contains data for only two countries. Luckily, there is a function in the forcats package that is designed specifically to address this problem.
+
 
 ```r
-ggplot(data=g,aes(x=year,y=max_GDP,fill=continent))+
-        geom_bar(stat="identity")+
-        coord_polar()+
-        scale_fill_brewer(palette="Set2")+xlab("Year")+ylab("Max GDP per Capita") +
-        theme_bw() +
-        theme(axis.text.y = element_blank())
+g2<- gapminder %>% 
+  group_by(continent, country, year)%>%
+  summarize(max_GDP=max(gdpPercap)) %>%
+  mutate(Continent = fct_infreq(continent))%>%
+  group_by(Continent, country, year)
+str(g2$Continent)
 ```
 
-![](hw5_files/figure-html/unnamed-chunk-7-1.png)<!-- -->
+```
+##  Factor w/ 5 levels "Africa","Americas",..: 1 1 1 1 1 1 1 1 1 1 ...
+```
 
 ```r
+test <- fct_rev(g$continent)
+str(test)
+```
+
+```
+##  Factor w/ 5 levels "Oceania","Europe",..: 5 5 5 5 5 5 5 5 5 5 ...
+```
+
+```r
+g2$continent<-fct_rev(g2$continent)
+str(g2$continent)
+```
+
+```
+##  Factor w/ 5 levels "Oceania","Europe",..: 5 5 5 5 5 5 5 5 5 5 ...
+```
+
+
+```r
+knitr::kable(tail(g2, n=25),  format = "markdown")
+```
+
+
+
+|continent |country        | year|  max_GDP|Continent |
+|:---------|:--------------|----:|--------:|:---------|
+|Europe    |United Kingdom | 2007| 33203.26|Europe    |
+|Oceania   |Australia      | 1952| 10039.60|Oceania   |
+|Oceania   |Australia      | 1957| 10949.65|Oceania   |
+|Oceania   |Australia      | 1962| 12217.23|Oceania   |
+|Oceania   |Australia      | 1967| 14526.12|Oceania   |
+|Oceania   |Australia      | 1972| 16788.63|Oceania   |
+|Oceania   |Australia      | 1977| 18334.20|Oceania   |
+|Oceania   |Australia      | 1982| 19477.01|Oceania   |
+|Oceania   |Australia      | 1987| 21888.89|Oceania   |
+|Oceania   |Australia      | 1992| 23424.77|Oceania   |
+|Oceania   |Australia      | 1997| 26997.94|Oceania   |
+|Oceania   |Australia      | 2002| 30687.75|Oceania   |
+|Oceania   |Australia      | 2007| 34435.37|Oceania   |
+|Oceania   |New Zealand    | 1952| 10556.58|Oceania   |
+|Oceania   |New Zealand    | 1957| 12247.40|Oceania   |
+|Oceania   |New Zealand    | 1962| 13175.68|Oceania   |
+|Oceania   |New Zealand    | 1967| 14463.92|Oceania   |
+|Oceania   |New Zealand    | 1972| 16046.04|Oceania   |
+|Oceania   |New Zealand    | 1977| 16233.72|Oceania   |
+|Oceania   |New Zealand    | 1982| 17632.41|Oceania   |
+|Oceania   |New Zealand    | 1987| 19007.19|Oceania   |
+|Oceania   |New Zealand    | 1992| 18363.32|Oceania   |
+|Oceania   |New Zealand    | 1997| 21050.41|Oceania   |
+|Oceania   |New Zealand    | 2002| 23189.80|Oceania   |
+|Oceania   |New Zealand    | 2007| 25185.01|Oceania   |
+
+From this table we can see that Oceania has been moved to the bottom of the list.
+
+
+```r
+ggplot(data=g2,aes(x=year,y=max_GDP, fill=continent))+
+        geom_bar(stat="identity") +
+        coord_polar() +
+        scale_fill_brewer(palette="Set2")+xlab("Year")+ylab("Max GDP per Capita") +
+        theme_bw() +
+        theme(axis.text.y = element_blank()) +
         labs(fill="Continent")
 ```
 
-```
-## $fill
-## [1] "Continent"
-## 
-## attr(,"class")
-## [1] "labels"
-```
+![](hw5_files/figure-html/unnamed-chunk-9-1.png)<!-- -->
 
 This looks pretty good. Admittedly, it doesn't fully redeem the pie chart, but this type of pie chart (called a rose plot) is certainly much better than a standard pie chart.
 
@@ -199,36 +260,96 @@ An even better way of displaying this data might be a stacked bar plot.
 
 
 ```r
-ggplot(data=g,aes(x=year,y=max_GDP,fill=continent))+
+ggplot(data=g2,aes(x=year,y=max_GDP,fill=continent))+
         geom_bar(stat="identity")+
         scale_fill_brewer(palette="Set2")+xlab("Year")+ylab("Max GDP per Capita") +
         theme_bw() +
-        theme(axis.text.y = element_blank())
-```
-
-![](hw5_files/figure-html/unnamed-chunk-8-1.png)<!-- -->
-
-```r
+        theme(axis.text.y = element_blank()) +
         labs(fill="Continent")
 ```
 
+![](hw5_files/figure-html/unnamed-chunk-10-1.png)<!-- -->
+
+Even this chart doesn't perfectly display this data. It may be an ill-posed problem, with no true solution. But I will argue that these charts display the data <i>well enough</i> for how complex the relationships are and are miles above the plain bar chart I produced at the beginning of this term!
+
+<h4>Saving a Plot</h4>
+
+
+```r
+ggsave("barchart.pdf", height = 10)
 ```
-## $fill
-## [1] "Continent"
-## 
-## attr(,"class")
-## [1] "labels"
+
+```
+## Saving 7 x 10 in image
 ```
 
-Even this chart doesn't perfectly display this data. It may be an ill-posed problem, with no true solution. But I will argue that these charts display the data well enough for how complex the relationships are and are miles above the plain bar chart I produced at the beginning of this term!
-
-# may want to remove y scale
-
-
+```r
+ggsave("barchart.jpg", height = 4, width = 4)
+```
 
 
 
+```r
+getwd()
+```
 
+```
+## [1] "C:/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade"
+```
+
+```r
+#![Alt text] (/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade/barchart.jpg) 
+
+#! [Alt text]     
+# Error: unexpected '[' in "! ["
+```
+
+![Alt text] (/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade/barchart.pdf) 
+
+This code does not work. Any variation of ! [Alt text] is seen as an error by R. I don't know what this homework prompt is talking about.
+
+
+```r
+library("readbitmap")
+library("jpeg")
+```
+
+
+```r
+# getwd()
+# file.info("barchart.jpg")
+# img <- readJPEG("barchart.jpg")
+# plot(img) 
+```
+
+Sure, I'll take it. It's a very strange black image.
+
+
+```r
+# img = readImage('/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade/barchart.pdf')
+# display(img, method = "raster")
+```
+
+
+```r
+# fpath <- system.file('/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade/barchart.jpg',package='imager') 
+# 
+# myplot <- read.bitmap(fpath)
+# plot(myplot)
+```
+
+
+
+```r
+#https://rpubs.com/RatherBit/90926
+```
+
+
+
+
+<h4>Process</h4>
+<li>I felt like this homework prompt was difficult to understand at times</li>
+<li>For instance, I Googled some information to see what the prompt was talking about for feeding a saved file into the markdown document. The first thing that came up was the stat545 website.</li>
 
 
 
