@@ -69,9 +69,6 @@ length(gap$continent)
 
 Here we see that the rows associated with Oceania have been removed and the dataset contains 1680 observations, down from 1704.
 
-"Additionally, remove unused factor levels." 
-"...address the number of rows and the levels of the affected factors."
-
 
 ```r
 names(gapminder)
@@ -122,15 +119,9 @@ str(gap)
 ##  $ gdpPercap: num  779 821 853 836 740 ...
 ```
 
-I do not see any unused factor levels, so I will move on to the next step.
+<h4>Reordering Factors and Making Improved Graphs</h4>
 
 "Reorder the levels of country or continent. Use the forcats package to change the order of the factor levels, based on a principled summary of one of the quantitative variables. Consider experimenting with a summary statistic beyond the most basic choice of the median."
-
-
-
-
-
-
 
 "Remake at least one figure or create a new one, in light of something you learned in the recent class meetings about visualization design and color."
 
@@ -304,9 +295,8 @@ getwd()
 # Error: unexpected '[' in "! ["
 ```
 
-![Alt text] (/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade/barchart.pdf) 
+![Alt text](/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade/barchart.jpg)
 
-This code does not work. Any variation of ! [Alt text] is seen as an error by R. I don't know what this homework prompt is talking about.
 
 
 ```r
@@ -348,8 +338,8 @@ Sure, I'll take it. It's a very strange black image.
 
 
 <h4>Process</h4>
-<li>I felt like this homework prompt was difficult to understand at times</li>
-<li>For instance, I Googled some information to see what the prompt was talking about for feeding a saved file into the markdown document. The first thing that came up was the stat545 website.</li>
+<li>I felt like this homework prompt was difficult to understand at times.</li>
+<li>For instance, I Googled some information to see what the prompt was talking about for feeding a saved file into the markdown document. The first thing that came up was the stat545 website. I eventually figured it out, but I experienced some frustration with this step.</li>
 
 
 
