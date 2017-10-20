@@ -288,58 +288,56 @@ getwd()
 ## [1] "C:/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade"
 ```
 
-```r
-#![Alt text] (/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade/barchart.jpg) 
-
-#! [Alt text]     
-# Error: unexpected '[' in "! ["
-```
-
 ![Alt text](/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade/barchart.jpg)
 
+<h4>Experimenting with File I/O</h4>
+
+I'm going to experiment with writing and reading CSV files, since that is the file type that I use most often in conjunction with R.
 
 
 ```r
-library("readbitmap")
-library("jpeg")
+write_csv(gapminder, "gapminder.csv")
 ```
+
+Now I have the file saved in my project folder, so that's pretty cool.
 
 
 ```r
-# getwd()
-# file.info("barchart.jpg")
-# img <- readJPEG("barchart.jpg")
-# plot(img) 
+head(read_csv("C:/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade/gapminder.csv"))
 ```
 
-Sure, I'll take it. It's a very strange black image.
-
-
-```r
-# img = readImage('/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade/barchart.pdf')
-# display(img, method = "raster")
+```
+## Parsed with column specification:
+## cols(
+##   country = col_character(),
+##   continent = col_character(),
+##   year = col_integer(),
+##   lifeExp = col_double(),
+##   pop = col_integer(),
+##   gdpPercap = col_double()
+## )
 ```
 
-
-```r
-# fpath <- system.file('/Users/Wade/OneDrive/2017 Fall Semester/Exploratory Statistics/stat545-hw5-wade-wade/barchart.jpg',package='imager') 
-# 
-# myplot <- read.bitmap(fpath)
-# plot(myplot)
+```
+## # A tibble: 6 × 6
+##       country continent  year lifeExp      pop gdpPercap
+##         <chr>     <chr> <int>   <dbl>    <int>     <dbl>
+## 1 Afghanistan      Asia  1952  28.801  8425333  779.4453
+## 2 Afghanistan      Asia  1957  30.332  9240934  820.8530
+## 3 Afghanistan      Asia  1962  31.997 10267083  853.1007
+## 4 Afghanistan      Asia  1967  34.020 11537966  836.1971
+## 5 Afghanistan      Asia  1972  36.088 13079460  739.9811
+## 6 Afghanistan      Asia  1977  38.438 14880372  786.1134
 ```
 
+This method doesn't appear too different from how I usually read csv's, but I noticed you don't need to type "header=TRUE." It doesn't even recognize that statement.
 
-
-```r
-#https://rpubs.com/RatherBit/90926
-```
-
-
-
+As a general tip, I find that whenever I read in data using the file address, my file address always has backward slashes instead of forward slashes. Use the ctrl+f find and replace to turn them into forward slashes so R can read the file.
 
 <h4>Process</h4>
 <li>I felt like this homework prompt was difficult to understand at times.</li>
 <li>For instance, I Googled some information to see what the prompt was talking about for feeding a saved file into the markdown document. The first thing that came up was the stat545 website. I eventually figured it out, but I experienced some frustration with this step.</li>
+<li>I found that there are a lot more errors involved when you try to save and read things outside of the R document you are working with. Sure, these can be overcome, but I think it may be best to avoid reading in too many outside files.</li>
 
 
 
